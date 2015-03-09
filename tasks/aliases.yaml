@@ -1,0 +1,16 @@
+default:
+  - build
+
+build:
+  - clean
+  # - jshint:lib
+  # - jscs:lib
+  - lintspaces:lib
+  - browserify
+  # - umd
+  - concat
+  - uglify
+
+dev:
+  - build
+  - watch

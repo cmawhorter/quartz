@@ -1,0 +1,25 @@
+{
+  "name": "quartz",
+  "version": "0.0.1",
+  "description": "Convert a public remote API into a local copy.",
+  "main": "dist/quartz.js",
+  "author": {
+    "name": "Cory Mawhorter",
+    "email": "cory.mawhorter@gmail.com",
+    "homepage": "http://mawhorter.net/"
+  },
+  "repository": {
+    "url": "https://github.com/cmawhorter/quartz.git",
+    "type": "git"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "tasks",
+    "tmp",
+    "tests"
+  ]
+}
