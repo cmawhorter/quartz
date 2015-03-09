@@ -64,7 +64,12 @@ var quartz = new Quartz({
   // function that gets called every time a new XHR request is created
   // called before the xhr gets wrapped by Quartz
   // see: http://sinonjs.org/docs/#useFakeXMLHttpRequest
-  onCreate: undefined
+  onCreate: undefined,
+
+  // parses the querystring to res.query in the handler.  null to disable
+  parseQuerystring: function(url) {
+    // crappy default function
+  }
 });
 ```
 
