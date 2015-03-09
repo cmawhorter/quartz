@@ -141,7 +141,6 @@ Quartz.prototype._response = function(xhr) {
     }
   };
 
-  console.warn('xhr.url', 'quartz', xhr.url);
   xhr.query = this.options.parseQuerystring(xhr.url) || {};
 
   for (var k in extensions) {
