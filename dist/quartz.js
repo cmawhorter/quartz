@@ -1,5 +1,5 @@
 /*! quartz - v
- *  Release on: 2015-03-10
+ *  Release on: 2015-03-11
  *  Copyright (c) 2015 Cory Mawhorter
  *  Licensed MIT */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -35,9 +35,13 @@ function Quartz(options) {
   this._server = null;
   this._handlers = [];
   this._started = false;
+
+  this.logger = new Logger('debug' in this.options ? this.options.debug : -1, 'Quartz: ');
 }
 
 Quartz.prototype.listen = function() {
+  this.logger.debug('Starting quartz server with options:', this.options);
+
   var _this = this;
   var sinon = require('sinon');
   this._server = sinon.fakeServer.create();
@@ -61,13 +65,16 @@ Quartz.prototype.listen = function() {
     this._reattachHandlers();
   }
 
+  this.logger.info('Quartz started');
+
   return this;
 };
 
 Quartz.prototype.start = Quartz.prototype.listen;
 Quartz.prototype.init = Quartz.prototype.listen;
 
-Quartz.prototype._reattachHandlers = function(first_argument) {
+Quartz.prototype._reattachHandlers = function() {
+  this.logger.debug('Reattaching handlers', this._handlers);
   for (var i=0; i < this._handlers.length; i++) {
     var args = this._handlers[i];
     this._responder.apply(this, args);
@@ -77,6 +84,7 @@ Quartz.prototype._reattachHandlers = function(first_argument) {
 Quartz.prototype._responder = function(verb, route, handler) {
   var _this = this;
   this._server.respondWith(verb, route, function(xhr) {
+    _this.logger.log('Response handler', verb, route);
     _this._response(xhr);
     return handler.apply(this, arguments);
   });
@@ -84,6 +92,7 @@ Quartz.prototype._responder = function(verb, route, handler) {
 
 Quartz.prototype._response = function(xhr) {
   var _this = this;
+  var _status = this.options.defaultStatusCode;
   var _findHeaderKey = function(lookup) {
     for (var k in xhr.requestHeaders) {
       if (k.toLowerCase() === lookup) {
@@ -118,7 +127,7 @@ Quartz.prototype._response = function(xhr) {
     },
 
     status: function(code) {
-      this.status = code;
+      _status = code;
       return this;
     },
 
@@ -128,7 +137,9 @@ Quartz.prototype._response = function(xhr) {
 
     send: function(data) {
       if (void 0 === data || typeof data === 'string') {
-        this.respond(this.status || _this.options.defaultStatusCode, this.requestHeaders, data);
+        _this.logger.log('Sending response', _status, this.requestHeaders);
+        _this.logger.debug('Response data', data);
+        this.respond(_status, this.requestHeaders, data);
       }
       else {
         this.json(data);
@@ -206,11 +217,52 @@ Quartz.prototype.on = function(verb, route, handler) {
 Quartz.prototype.close = function() {
   this._server.restore();
   this._started = false;
+  this.logger.info('Quartz stopped');
   return this;
 };
 
 Quartz.prototype.stop = Quartz.prototype.close;
 Quartz.prototype.shutdown = Quartz.prototype.close;
+
+
+
+
+function Logger(level, prefix) {
+  this.logLevel = level;
+  this.prefix = prefix;
+}
+
+Logger.prototype._log = function(threshold, loggerName, args) {
+  if (this.logLevel >= threshold) {
+    args = Array.prototype.slice.call(args);
+    if (this.prefix) {
+      args.unshift(this.prefix);
+    }
+    console[loggerName].apply(console, args);
+  }
+};
+
+Logger.prototype.debug = function() {
+  this._log(3, 'debug', arguments);
+};
+
+Logger.prototype.log = function() {
+  this._log(2, 'log', arguments);
+};
+
+Logger.prototype.info = function() {
+  this._log(1, 'info', arguments);
+};
+
+Logger.prototype.warn = function() {
+  this._log(0, 'warn', arguments);
+};
+
+Logger.prototype.error = function() {
+  this._log(-1, 'error', arguments);
+};
+
+Quartz.Logger = Logger;
 
 global.Quartz = Quartz;
 
