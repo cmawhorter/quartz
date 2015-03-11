@@ -42,8 +42,8 @@ Quartz.prototype.listen = function() {
   var sinon = require('sinon');
   this._server = sinon.fakeServer.create();
 
-  this._server.autoRespond = false;
-  // this._server.autoRespondAfter = 'latency' in this.options ? this.options.latency : 10;
+  this._server.autoRespond = true;
+  this._server.autoRespondAfter = 'latency' in this.options ? this.options.latency : 10;
 
   // ignore all requests except ones that have a route attached
   this._server.xhr.useFilters = true;
