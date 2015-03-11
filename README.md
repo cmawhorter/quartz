@@ -56,11 +56,6 @@ var quartz = new Quartz({
   // if no http status is set, it defaults to this
   defaultStatusCode: 200
 
-  // fake network latency between request -> response
-  // beware: some poorly constructed apps have races that rely on network 
-  // latency.  increase if you experience weird, inconsistent problems
-  latency: 10 // ms
-
   // function that gets called every time a new XHR request is created
   // called before the xhr gets wrapped by Quartz
   // see: http://sinonjs.org/docs/#useFakeXMLHttpRequest
