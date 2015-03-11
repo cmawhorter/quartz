@@ -230,6 +230,7 @@ Quartz.prototype.shutdown = Quartz.prototype.close;
 function Logger(level, prefix) {
   this.logLevel = level;
   this.prefix = prefix;
+  this.proxyTo = global.console;
 }
 
 Logger.prototype._log = function(threshold, loggerName, args) {
@@ -238,7 +239,7 @@ Logger.prototype._log = function(threshold, loggerName, args) {
     if (this.prefix) {
       args.unshift(this.prefix);
     }
-    console[loggerName].apply(console, args);
+    this.proxyTo[loggerName].apply(this.proxyTo, args);
   }
 };
 
