@@ -1,5 +1,5 @@
 /*! quartz - v
- *  Release on: 2015-03-11
+ *  Release on: 2015-03-12
  *  Copyright (c) 2015 Cory Mawhorter
  *  Licensed MIT */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -84,7 +84,7 @@ Quartz.prototype._reattachHandlers = function() {
 Quartz.prototype._responder = function(verb, route, handler) {
   var _this = this;
   this._server.respondWith(verb, route, function(xhr) {
-    _this.logger.log('Response handler', verb, route);
+    _this.logger.log('%s %s -> %s', verb.toUpperCase(), xhr.url, route);
     _this._response(xhr);
     return handler.apply(this, arguments);
   });
@@ -237,7 +237,12 @@ Logger.prototype._log = function(threshold, loggerName, args) {
   if (this.logLevel >= threshold) {
     args = Array.prototype.slice.call(args);
     if (this.prefix) {
-      args.unshift(this.prefix);
+      if (typeof args[0] === 'string') {
+        args[0] = this.prefix + args[0];
+      }
+      else {
+        args.unshift(this.prefix);
+      }
     }
     this.proxyTo[loggerName].apply(this.proxyTo, args);
   }
