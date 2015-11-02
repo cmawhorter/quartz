@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "quartz",
+  "main": "dist/quartz.js",
   "author": {
     "name": "Cory Mawhorter",
     "email": "cory.mawhorter@gmail.com",
